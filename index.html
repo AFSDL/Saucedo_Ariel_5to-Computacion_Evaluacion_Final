@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Analisis y Visualizacion de Datos</title>
+    <!-- Carga de la biblioteca Chart.js desde un CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <h1>Ingrese sus datos en la tabla</h1>
+    <table id="data-table">
+        <tr>
+            <th>Categoria</th>
+            <th>Valor</th>
+        </tr>
+        <tr>
+            <td><input type="number" class="x-input"></td>
+            <td><input type="number" class="y-input"></td>
+        </tr>
+    </table>
+    <button onclick="addRow()">Agregar fila</button>
+    <button onclick="generateGraph()">Generar Grafico</button>
+    <canvas id="myChart" width="400" height="200"></canvas>
+
+    <script>
+        let data = [];
+
+        function addRow() {
+            const xInput = document.createElement("input");
+            xInput.type = "number";
+            xInput.classList.add("x-input");
+
+            const yInput = document.createElement("input");
+            yInput.type = "number";
+            yInput.classList.add("y-input");
+
+            const newRow = document.createElement("tr");
+            const xCell = document.createElement("td");
+            const yCell = document.createElement("td");
+            xCell.appendChild(xInput);
+            yCell.appendChild(yInput);
+            newRow.appendChild(xCell);
+            newRow.appendChild(yCell);
+            document.getElementById("data-table").appendChild(newRow);
+        }
+
+        function getTableData() {
+            data = [];
+            const tableRows = document.querySelectorAll("#data-table tr");
+            for (let i = 1; i < tableRows.length; i++) {
+                const row = tableRows[i];
+                const xValue = parseFloat(row.querySelector(".x-input").value);
+                const yValue = parseFloat(row.querySelector(".y-input").value);
+                data.push({ x: xValue, y: yValue });
+            }
+        }
+
+        function generateGraph() {
+            getTableData();
+
+            // Ordenar los datos por el valor de X (opcional)
+            data.sort((a, b) => a.x - b.x);
+
+            const ctx = document.getElementById("myChart").getContext("2d");
+            new Chart(ctx, {
+                type: "line",
+                data: {
+                    datasets: [{
+                        label: "Datos ingresados",
+                        data: data,
+                        borderColor: "rgba(75, 192, 192, 1)",
+                        backgroundColor: "rgba(75, 192, 192, 0.2)",
+                        fill: true,
+                    }],
+                },
+                options: {
+                    scales: {
+                        x: {
+                            type: "linear",
+                            position: "bottom",
+                        },
+                    },
+                },
+            });
+        }
+    </script>
+</body>
+
+</html>
